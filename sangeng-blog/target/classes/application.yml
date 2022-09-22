@@ -1,0 +1,35 @@
+server:
+  port: 7777
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sg_blog?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 5MB
+  redis:
+    database: 0
+    host: 120.24.40.87
+    port: 6379
+    password: 1234
+    timeout: 5000
+
+mybatis-plus:
+  configuration:
+    # 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+
+oss:
+  accessKey: sseyXhfDXGXctrQZIJ8khe7ECy5znaCEwCOgjSr6
+  secretKey: k48BECVAOAz7OirJ5nL76tdZjDLgqtVjUdN91wc7
+  bucket: jerryh-blog
+

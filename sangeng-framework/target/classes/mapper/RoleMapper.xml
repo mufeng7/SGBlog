@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sangeng.mapper.RoleMapper">
+    <select id="selectRoleKeyByUserId" resultType="java.lang.String">
+        SELECT DISTINCT
+            r.role_key
+        FROM
+            sys_user_role ur
+                LEFT JOIN sys_role r ON ur.role_id = r.id
+        WHERE
+            ur.user_id = #{userId}
+          AND r.`status` = 0
+          AND r.del_flag = 0;
+    </select>
+
+
+    <select id="pageRoleList" resultType="com.sangeng.domain.entity.Role">
+        SELECT
+            sr.id,
+            sr.role_name,
+            sr.role_key,
+            sr.role_sort,
+            sr.`status`
+        FROM
+            sys_role sr
+        <where>
+            sr.del_flag = 0
+            <if test="roleListDto.roleName != null and roleListDto.roleName != ''">
+                and sr.role_name LIKE CONCAT( '%', #{roleListDto.roleName}, '%' )
+            </if>
+            <if test="roleListDto.status != null and roleListDto.status != ''">
+                and sr.status = #{roleListDto.status}
+            </if>
+
+        </where>
+        order by sr.role_sort
+
+    </select>
+</mapper>

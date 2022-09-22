@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sangeng.mapper.UserMapper">
+    <select id="pageUserList" resultType="com.sangeng.domain.entity.User">
+        SELECT
+            su.id,
+            su.user_name,
+            su.nick_name,
+            su.phonenumber,
+            su.`status`
+        FROM
+            sys_user su
+        <where>
+            su.del_flag = 0
+            <if test="userListDto.userName != null and userListDto.userName != ''">
+                and su.user_name LIKE CONCAT( '%', #{userListDto.userName}, '%' )
+            </if>
+            <if test="userListDto.phonenumber != null and userListDto.phonenumber != ''">
+                and su.phonenumber LIKE CONCAT( '', #{userListDto.phonenumber}, '%' )
+            </if>
+            <if test="userListDto.status != null and userListDto.status != ''">
+                and su.`status` = #{userListDto.status}
+            </if>
+        </where>
+    </select>
+</mapper>

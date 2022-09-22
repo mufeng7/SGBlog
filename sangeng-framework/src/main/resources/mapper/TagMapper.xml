@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sangeng.mapper.TagMapper">
+
+    <resultMap id="tagList" type="com.sangeng.domain.entity.Tag">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="pageTagList" resultMap="tagList">
+        SELECT
+            t.id,
+            t.name,
+            t.remark
+        FROM
+            sg_tag t
+        <where>
+            t.del_flag = 0
+            <if test="name1 != null and name1 != ''">
+                and t.`name` LIKE CONCAT('%',#{name1},'%')
+            </if>
+        </where>
+
+    </select>
+</mapper>

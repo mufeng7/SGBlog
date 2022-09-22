@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sangeng.mapper.MenuMapper">
+
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        SELECT  DISTINCT
+            m.perms
+        FROM
+            sys_user_role ur
+                LEFT JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+                LEFT JOIN sys_menu m ON m.id = rm.menu_id
+        WHERE
+            ur.user_id = #{id}
+          AND m.menu_type IN ( "C", "F" )
+          AND m.`status` = 0
+          AND m.del_flag = 0
+    </select>
+
+    <select id="selectAllRouterMenu" resultType="com.sangeng.domain.entity.Menu">
+        SELECT  DISTINCT
+            m.id,m.parent_id,m.menu_name,m.path,m.component,m.visible,m.status,IFNULL(m.perms,'') as perms,m.is_frame,m.menu_type,m.order_num,m.create_time
+        FROM
+             sys_menu m
+        WHERE
+          m.menu_type IN ( "C", "M" )
+          AND m.`status` = 0
+          AND m.del_flag = 0
+        order by
+            m.parent_id,m.order_num
+    </select>
+
+
+    <select id="selectRouterMenuByUserId" resultType="com.sangeng.domain.entity.Menu">
+        SELECT  DISTINCT
+            m.id,m.parent_id,m.menu_name,m.path,m.component,m.visible,m.status,IFNULL(m.perms,'') as perms,m.is_frame,m.menu_type,m.order_num,m.create_time
+        FROM
+            sys_user_role ur
+                LEFT JOIN sys_role_menu rm ON ur.role_id = rm.role_id
+                LEFT JOIN sys_menu m ON m.id = rm.menu_id
+        WHERE
+            ur.user_id = #{userId}
+          AND m.menu_type IN ( "C", "M" )
+          AND m.`status` = 0
+          AND m.del_flag = 0
+        order by
+            m.parent_id,m.order_num
+    </select>
+
+    <select id="listMenu" resultType="com.sangeng.domain.entity.Menu">
+        SELECT
+        sm.*
+        FROM
+            sys_menu sm
+        <where>
+            sm.del_flag = 0
+            <if test="menuDto.name != null and menuDto.name != ''">
+                and sm.menu_name LIKE CONCAT( '%', #{menuDto.name}, '%' )
+            </if>
+            <if test="menuDto.status != null and menuDto.status != ''">
+                and sm.`status` = #{menuDto.status}
+            </if>
+        </where>
+        order by sm.order_num
+
+    </select>
+
+
+    <resultMap id="BaseResultMap" type="com.sangeng.domain.entity.Menu">
+        <id column="id" property="id" />
+        <result column="menu_name" property="menuName"/>
+        <result column="parent_id" property="parentId"/>
+    </resultMap>
+
+    <!--自连接三次，获取多级子菜单-->
+    <resultMap id="MenusWithChildren" type="com.sangeng.domain.entity.Menu" extends="BaseResultMap">
+        <id column="id1" property="id" />
+        <result column="menu_name1" property="menuName" />
+        <collection property="children" ofType="com.sangeng.domain.entity.Menu">
+            <id column="id2" property="id" />
+            <result column="menu_name2" property="menuName" />
+            <collection property="children" ofType="com.sangeng.domain.entity.Menu">
+                <id column="id3" property="id" />
+                <result column="menu_name3" property="menuName" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="treeSelect" resultType="com.sangeng.domain.vo.SimpleMenuVo">
+    </select>
+</mapper>
